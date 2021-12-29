@@ -156,18 +156,20 @@ namespace FFXIII_ZTR_Decompressor
                 }
                 Encoding encoding = Encoding.GetEncoding(encodingCode);
                 result[i] = encoding.GetString(textBytes.ToArray());
-                //if (result[i].Contains("Ataque↑"))
-                //{
-                //    foreach (var S in textBytes.ToArray())
-                //    {
-                //        Console.Write($" {S:X} ");
-                //    }
-                //    Console.WriteLine();
-                //    Console.WriteLine(result[i]);
-                //}
+
+                if (result[i].Contains("Tienes:"))
+                {
+                    foreach (var S in textBytes.ToArray())
+                    {
+                        Console.Write($" {S:X} ");
+                    }
+                    Console.WriteLine();
+                    Console.WriteLine(result[i]);
+                }
             }
             return result.ToArray();
         }
+
         public static string[] Decompressor(string input, int encodingCode = 65001)
         {
             using (FileStream stream = File.OpenRead(input))
@@ -235,7 +237,8 @@ namespace FFXIII_ZTR_Decompressor
                         string value;
                         if (input.TryGetValue(idsDecompressed[i], out value))
                         {
-                            byte[] bs = Encoding.GetEncoding(encodingCode).GetBytes(value);
+                            //byte[] bs = Encoding.GetEncoding(encodingCode).GetBytes(value);
+                            byte[] bs = Encoding.UTF8.GetBytes(value);
                             foreach (KeyValuePair<string, byte[]> entry in gameCode)
                             {
                                 byte[] temp = ByteArrayHandler.ReplaceBytes(bs, Encoding.UTF8.GetBytes(entry.Key), entry.Value);
@@ -244,6 +247,10 @@ namespace FFXIII_ZTR_Decompressor
                                 {
                                     bs = temp;
                                     var infoo = Encoding.UTF8.GetString(temp);
+                                    if (infoo.Contains("OPTTT"))
+                                    {
+
+                                    }
                                 }
                             }
                             byte[] textBytes = new byte[bs.Length + 2];
